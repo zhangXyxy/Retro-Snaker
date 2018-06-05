@@ -1,0 +1,225 @@
+<html lang = "en">
+<head>
+	<title></title>
+	<meta charset = "utf-8">
+	<style type="text/css">
+		/**{
+			margin: 0;
+			padding: 0;
+		}*/
+		/*.wrapper{
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 600px;
+			height: 500px;
+			margin-top: -250px;
+			margin-left: -300px;
+			background-color: yellow;
+		}*/
+
+	</style>
+</head>
+<body>
+
+	<!-- <div class = "wrapper">
+		<tr>
+			<td></td>
+			<td></td>
+		</tr>
+	</div>
+ -->	
+ <!-- <button>开始</button> -->
+
+
+
+	<script type="text/javascript">
+		// var oBtn = document.getElementsByTagName('btn');
+
+
+
+	
+		var score = 0;
+		var Square = function () {
+			
+			this.width = 800;
+			this.height = 400;
+			this.position = 'absolute';
+			this.border = '1px solid black';
+			this.squ = null;
+			this.show = function () {
+				this.squ = document.createElement('div');
+				
+				
+				this.squ.style.width = this.width + 'px';
+				this.squ.style.height = this.height + 'px';
+				this.squ.style.position = this.position;
+				this.squ.style.border = this.border;
+				document.getElementsByTagName('body')[0].appendChild(this.squ);
+			}
+		}
+
+		var Point = function () {
+			this.position = 'absolute';
+			this.width = 20;
+			this.height = 20;
+			this.color = 'gray';
+			this.po = '';
+			// this.x = 0;
+			// this.y = 0;
+			this.show = function () {
+				if (this.po == '') {
+					
+					this.po = document.createElement('div');
+					this.po.style.position = this.position;
+					this.po.style.width = this.width + 'px';
+					this.po.style.height = this.height + 'px';
+					this.po.style.backgroundColor = this.color;
+					square.squ.appendChild(this.po);
+				}
+
+				this.x = Math.floor(Math.random()*40);
+				this.y = Math.floor(Math.random()*20);
+				this.po.style.left = this.x * this.width + 'px';
+				this.po.style.top = this.y * this.height + 'px';
+			};
+		}
+
+
+
+
+		var Snake = function () {
+			this.position = 'absolute';
+			this.height = 20;
+			this.width = 20;
+			// this.color = 'black';
+			this.body = [[3,2,'black',null],[2,2,'gray',null],[1,2,'gray',null]];
+			this.direction = '';
+
+			this.setDirection = function (code) {
+
+
+				// if (code = 37){
+				// 	this.direction = 'left';
+				// }else if (code = 38) {
+				// 	this.direction = 'up';
+				// }else if (code = 39) {
+				// 	this.direction = 'right';
+				// }else if (code = 40) {
+				// 	this.direction = 'down';
+				// }
+
+
+				switch (code) {
+	                case 37:
+	                    this.direction='left';
+	                    break;
+	                case 38:
+	                    this.direction='up';
+	                    break;
+	                case 39:
+	                    this.direction='right';
+	                    break;
+	                case 40:
+	                    this.direction='down';
+	                    break;
+	            }
+			}
+			this.show = function () {
+				for (var i = 0; i < this.body.length; i++){
+					if (this.body[i][3] == null) {
+						this.body[i][3] = document.createElement('div');
+						this.body[i][3].style.position = this.position;
+						this.body[i][3].style.height = this.height + 'px';
+						this.body[i][3].style.width = this.width + 'px';
+						this.body[i][3].style.backgroundColor = this.body[i][2];
+						square.squ.appendChild(this.body[i][3]);
+					}
+					this.body[i][3].style.left = this.body[i][0]*this.width + 'px';
+					this.body[i][3].style.top = this.body[i][1]*this.height + 'px';
+				}
+			}
+
+			this.move = function () {
+				var length = this.body.length - 1;
+				for (var i = length; i > 0; i--){
+					//横坐标
+					this.body[i][0] = this.body[i-1][0];
+					//纵坐标
+					this.body[i][1] = this.body[i-1][1];
+				}
+				switch(this.direction) {
+					case 'right':
+						this.body[0][0] += 1;
+	                    break;
+	                case 'down':
+	                    this.body[0][1] += 1;
+	                    break;
+	                case 'left':
+	                    this.body[0][0] -= 1;
+	                    break;
+	                case 'up':
+	                    this.body[0][1] -= 1;
+	                    break;
+	                default:
+	                    return;
+
+				}
+
+			
+				if (this.body[0][0] == point.x && this.body[0][1] == point.y) {
+					var x = this.body[length][0];
+					var y = this.body[length][1];
+
+					score++;
+					
+					
+					this.body.push([x, y, 'gray', null]);
+					point.show();
+				}
+
+				if (this.body[0][0] < 0 || this.body[0][0] > 39 || this.body[0][1] < 0 || this.body[0][1] >19){
+					alert('gameover ' + ' score: ' + score);
+					
+					clearTimeout(timer);
+					return;
+				}
+				this.show();
+			}
+		}
+
+		
+		window.onload = function () {
+			square = new Square();
+			square.show();
+
+			point = new Point();
+			point.show();
+
+			snake = new Snake();
+			snake.show();
+
+			timer = setInterval('snake.move()',200);
+			
+			document.onkeydown = function () {
+				
+				var code;
+				if (window.event) {
+					code = window.event.keyCode;
+				}else {
+					code = event.keyCode;
+				}
+				snake.setDirection(code);
+			};
+		}
+		//设置小方格
+		//用定时器，多少秒走一格
+		//加上另一个小方格后个一起走
+		//用随机数设立位置点
+
+
+
+	</script>
+
+</body>
+</html>
